@@ -1,5 +1,5 @@
 # Ailo
-Local business map: React + OpenLayers (OpenStreetMap tiles) + Firebase (Auth and Firestore).
+Local business map for good design practices using React + OpenLayers (OpenStreetMap tiles) & Firebase (Auth and Firestore).
 
 ## Run locally
     npm install
