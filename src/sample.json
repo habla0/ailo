@@ -1,0 +1,5 @@
+[
+  { "id": "s1", "name": "Harbour Bean Roasters", "address": "12 Circular Quay W, Sydney NSW 2000", "lng": 151.2108, "lat": -33.8615, "hours": "Mon-Fri 7am-4pm", "category": "Cafe" },
+  { "id": "s2", "name": "Paddington Books", "address": "88 Oxford St, Paddington NSW 2021", "lng": 151.2269, "lat": -33.8844, "hours": "Daily 10am-6pm", "category": "Bookshop" },
+  { "id": "s3", "name": "Newtown Noodle House", "address": "201 King St, Newtown NSW 2042", "lng": 151.1790, "lat": -33.8976, "hours": "Tue-Sun 11am-9pm", "category": "Restaurant" }
+]
