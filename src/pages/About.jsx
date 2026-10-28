@@ -2,10 +2,9 @@
 export default function About() {
   return (
     <main className="page about">
-      <h1>About Ailo</h1>
+      <h1>ABOUT AILO</h1>
       <p className="lead">
-        Ailo is a community-driven project to help people discover and support local businesses 
-        with cool human-made branding.
+        Ailo is a community-driven crowdsourcing project to help people discover and support cool, human-made local businesses.
       </p>
 
       <section>
@@ -28,7 +27,6 @@ export default function About() {
       <section>
         <h2>Contact us</h2>
         <p>Shoot us an email: ailo.cocreate@gmail.com</p>
-        <br />
         <p>Follow us on Instagram: @ailo.cocreate</p>
       </section>
     </main>
