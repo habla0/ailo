@@ -20,7 +20,7 @@ export default function About() {
       <section>
         <h2>How this website works</h2>
         <p>
-          Use this website to pin your favourite businesses and share them with the community! They can be anything ranging from a restaurant to retail.
+          Use this website to pin your favourite businesses and share them with the community! They can be literally anything ranging from restaurants to retail and more.
         </p>
       </section>
 
