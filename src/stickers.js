@@ -1,10 +1,12 @@
-// Ailo pins. Files live in public/stickers/.
+// Ailo pins. Files live in public/stickers/. `ring` is the outline colour, used for the pin's arrow.
 export const STICKERS = [
-  { id: 'navy', label: 'Navy pin' },
-  { id: 'coral', label: 'Coral pin' },
-  { id: 'cream', label: 'Cream pin' },
-  { id: 'magenta', label: 'Magenta pin' },
+  { id: 'navy', label: 'Navy pin', ring: '#102F76' },
+  { id: 'coral', label: 'Coral pin', ring: '#F95762' },
+  { id: 'cream', label: 'Cream pin', ring: '#FEF2D9' },
+  { id: 'magenta', label: 'Magenta pin', ring: '#E7256C' },
 ];
+
+export const ringFor = (id) => STICKERS.find((s) => s.id === id)?.ring;
 
 export const stickerUrl = (id) => `${import.meta.env.BASE_URL}stickers/${id}.png`;
 

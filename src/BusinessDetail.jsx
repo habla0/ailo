@@ -1,6 +1,7 @@
+import { DAYS, formatDay, todayKey } from './hours';
 import { stickerFor, stickerUrl } from './stickers';
 
-// ownersPhoto can be an uploaded data URL, a full https:// link, or a file in public/owners/
+// Photos (businessPhoto, ownersPhoto) can be an uploaded data URL, a full https:// link, or a file in public/owners/
 // written as "owners/name.jpg".
 const photoSrc = (p) => (/^(https?:|data:)/.test(p) ? p : `${import.meta.env.BASE_URL}${p.replace(/^\/+/, '')}`);
 
@@ -17,8 +18,21 @@ export default function BusinessDetail({ business: b, onBack }) {
         {b.category && <span className="tag">{b.category}</span>}
         <h1>{b.name}</h1>
         {b.address && <p>{b.address}</p>}
-        {b.hours && <p className="hours">{b.hours}</p>}
+        {b.openingHours ? (
+          <dl className="week">
+            {DAYS.map((d) => (
+              <div key={d.key} className={d.key === todayKey() ? 'today' : ''}>
+                <dt>{d.label}</dt>
+                <dd>{formatDay(b.openingHours[d.key])}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : (
+          b.hours && <p className="hours">{b.hours}</p>
+        )}
       </header>
+
+      {b.businessPhoto && <img className="business-photo" src={photoSrc(b.businessPhoto)} alt={b.name} />}
 
       <section className="owners">
         <h2>Meet the Owners</h2>

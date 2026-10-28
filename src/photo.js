@@ -1,7 +1,7 @@
 // Shrinks an uploaded photo to a JPEG data URL small enough to store on the business document
 // (Firestore documents are capped at 1 MB; firestore.rules enforces the same MAX_CHARS).
 const MAX_SIDE = 1200;
-const MAX_CHARS = 700_000;
+const MAX_CHARS = 450_000; // two photos per business must fit in one document
 
 export async function photoToDataUrl(file) {
   const url = URL.createObjectURL(file);

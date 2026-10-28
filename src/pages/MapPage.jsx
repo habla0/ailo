@@ -1,11 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import MapView from '../MapView.jsx';
 import BusinessDetail from '../BusinessDetail.jsx';
+import AddressSearch from '../AddressSearch.jsx';
+import HoursPicker from '../HoursPicker.jsx';
+import { closedWeek, summarizeHours } from '../hours';
+import { reverseGeocode } from '../geocode';
 import { useBusinesses } from '../useBusinesses';
 import { photoToDataUrl } from '../photo';
 import { STICKERS, stickerFor, stickerUrl } from '../stickers';
 
-const empty = { name: '', address: '', hours: '', category: '', sticker: STICKERS[0].id, ownersIntro: '', ownersPhoto: '' };
+const empty = () => ({ name: '', address: '', openingHours: closedWeek(), category: '', sticker: STICKERS[0].id, businessPhoto: '', ownersIntro: '', ownersPhoto: '' });
 
 export default function MapPage({ user }) {
   const { items, add, error: loadError } = useBusinesses(user);
@@ -15,7 +19,12 @@ export default function MapPage({ user }) {
   const [draft, setDraft] = useState(null);
   const [form, setForm] = useState(empty);
   const [error, setError] = useState('');
-  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(''); // which photo field is being prepared
+  const [suggested, setSuggested] = useState(''); // address found for a map click, when one was already typed
+  const near = useRef(null); // current map centre, to rank address results nearby
+  const formRef = useRef(form);
+  formRef.current = form;
+  const lookup = useRef(0);
 
   const filtered = useMemo(() => {
     const t = q.toLowerCase();
@@ -25,33 +34,87 @@ export default function MapPage({ user }) {
 
   const field = (k) => ({ value: form[k], onChange: (e) => setForm({ ...form, [k]: e.target.value }) });
 
-  async function pickPhoto(e) {
+  function pickAddress(r) {
+    lookup.current += 1;
+    setForm((f) => ({ ...f, address: r.address, name: f.name || r.name }));
+    setDraft({ lng: r.lng, lat: r.lat, zoom: r.zoom });
+    setSuggested('');
+  }
+
+  // Clicking the map places the pin, then looks up the address there.
+  async function placeOnMap(pt) {
+    setDraft(pt);
+    setSuggested('');
+    const id = ++lookup.current;
+    try {
+      const hit = await reverseGeocode(pt);
+      if (id !== lookup.current || !hit?.address) return;
+      if (!formRef.current.address.trim()) setForm((f) => ({ ...f, address: hit.address }));
+      else if (hit.address !== formRef.current.address) setSuggested(hit.address);
+    } catch {
+      // The pin is placed either way; the address can still be typed.
+    }
+  }
+
+  function closeForm() {
+    lookup.current += 1;
+    setForm(empty());
+    setDraft(null);
+    setSuggested('');
+    setAdding(false);
+    setError('');
+  }
+
+  const pickPhoto = (key) => async (e) => {
     const file = e.target.files[0];
     e.target.value = '';
     if (!file) return;
     setError('');
-    setPhotoBusy(true);
+    setPhotoBusy(key);
     try {
-      const ownersPhoto = await photoToDataUrl(file);
-      setForm((f) => ({ ...f, ownersPhoto }));
+      const data = await photoToDataUrl(file);
+      setForm((f) => ({ ...f, [key]: data }));
     } catch (err) {
       setError(err.message);
     } finally {
-      setPhotoBusy(false);
+      setPhotoBusy('');
     }
-  }
+  };
+
+  const photoField = (key, label) => (
+    <div className="photo-pick">
+      <span className="legend">{label} <small>(optional)</small></span>
+      {photoBusy === key ? <div className="photo-empty">Preparing photo…</div>
+        : form[key] && <img src={form[key]} alt={`Preview: ${label.toLowerCase()}`} />}
+      <div className="row">
+        <label className="button">
+          {form[key] ? 'Replace photo' : 'Upload photo'}
+          <input type="file" accept="image/*" onChange={pickPhoto(key)} hidden />
+        </label>
+        {form[key] && photoBusy !== key && (
+          <button type="button" onClick={() => setForm({ ...form, [key]: '' })}>Remove</button>
+        )}
+      </div>
+    </div>
+  );
 
   async function save(e) {
     e.preventDefault();
-    if (!draft) return setError('Click the map to place the business.');
+    if (!draft) return setError('Pick an address from the suggestions or click the map to place the business.');
     try {
-      const { ownersPhoto, ownersIntro, ...rest } = form;
+      const { businessPhoto, ownersPhoto, ownersIntro, openingHours, ...rest } = form;
       const intro = ownersIntro.trim();
-      await add({ ...rest, ...(intro && { ownersIntro: intro }), ...(ownersPhoto && { ownersPhoto }), lng: draft.lng, lat: draft.lat });
-      setForm(empty);
-      setDraft(null);
-      setAdding(false);
-      setError('');
+      const hours = summarizeHours(openingHours);
+      await add({
+        ...rest,
+        ...(hours && { hours, openingHours }),
+        ...(businessPhoto && { businessPhoto }),
+        ...(intro && { ownersIntro: intro }),
+        ...(ownersPhoto && { ownersPhoto }),
+        lng: draft.lng,
+        lat: draft.lat,
+      });
+      closeForm();
     } catch (err) {
       setError(err.message);
     }
@@ -59,7 +122,7 @@ export default function MapPage({ user }) {
 
   return (
     <div className="layout">
-      <MapView businesses={filtered} selectedId={selectedId} onSelect={adding ? () => {} : setSelectedId} draft={draft} onPick={adding ? setDraft : undefined} />
+      <MapView businesses={filtered} selectedId={selectedId} onSelect={adding ? () => {} : setSelectedId} draft={draft} onPick={adding ? placeOnMap : undefined} onCenter={(c) => { near.current = c; }} />
 
       <aside className="panel">
         {selected ? (
@@ -73,12 +136,18 @@ export default function MapPage({ user }) {
 
             {adding && (
               <form onSubmit={save} className="form">
-                <p className={`place-hint${draft ? ' done' : ''}`}>{draft ? 'Location set. Click the map to move it.' : 'Click the map to place the business.'}</p>
+                <p className={`place-hint${draft ? ' done' : ''}`}>{draft ? 'Location set. Click the map to fine-tune it.' : 'Search an address or click the map to place the business.'}</p>
                 <p className="hint">Submissions are final and can't be edited or deleted here.</p>
                 <input required placeholder="Name" {...field('name')} />
-                <input placeholder="Address" {...field('address')} />
-                <input placeholder="Opening hours" {...field('hours')} />
+                <AddressSearch value={form.address} onChange={(address) => setForm((f) => ({ ...f, address }))} onPick={pickAddress} near={near} />
+                {suggested && (
+                  <p className="address-suggest">
+                    Pin is at <strong>{suggested}</strong>.{' '}
+                    <button type="button" className="link" onClick={() => { setForm((f) => ({ ...f, address: suggested })); setSuggested(''); }}>Use this address</button>
+                  </p>
+                )}
                 <input placeholder="Category" {...field('category')} />
+                <HoursPicker value={form.openingHours} onChange={(openingHours) => setForm((f) => ({ ...f, openingHours }))} />
                 <fieldset className="sticker-pick">
                   <legend>Pick a pin</legend>
                   {STICKERS.map((s) => (
@@ -88,28 +157,16 @@ export default function MapPage({ user }) {
                     </label>
                   ))}
                 </fieldset>
+                {photoField('businessPhoto', 'Photo of the business')}
                 <label className="intro-field">
                   <span className="legend">Meet the Owners intro <small>(optional)</small></span>
                   <textarea rows={4} maxLength={2000} placeholder="Who runs it and how it started. Each new line becomes its own paragraph." {...field('ownersIntro')} />
                 </label>
-                <div className="photo-pick">
-                  <span className="legend">Photo of the business <small>(optional)</small></span>
-                  {photoBusy ? <div className="photo-empty">Preparing photo…</div>
-                    : form.ownersPhoto && <img src={form.ownersPhoto} alt="Preview of the business photo" />}
-                  <div className="row">
-                    <label className="button">
-                      {form.ownersPhoto ? 'Replace photo' : 'Upload photo'}
-                      <input type="file" accept="image/*" onChange={pickPhoto} hidden />
-                    </label>
-                    {form.ownersPhoto && !photoBusy && (
-                      <button type="button" onClick={() => setForm({ ...form, ownersPhoto: '' })}>Remove</button>
-                    )}
-                  </div>
-                </div>
+                {photoField('ownersPhoto', 'Photo of the owners')}
                 {error && <p className="error">{error}</p>}
                 <div className="row">
                   <button className="primary" type="submit" disabled={photoBusy}>Save business</button>
-                  <button type="button" onClick={() => { setAdding(false); setDraft(null); setForm(empty); setError(''); }}>Cancel</button>
+                  <button type="button" onClick={closeForm}>Cancel</button>
                 </div>
               </form>
             )}

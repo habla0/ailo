@@ -11,23 +11,23 @@ import { fromLonLat, toLonLat } from 'ol/proj';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
 import { applyStyle } from 'ol-mapbox-style';
 import { loadBrandStyle } from './mapStyle';
-import { stickerFor, stickerUrl } from './stickers';
+import { ringFor, stickerFor, stickerUrl } from './stickers';
 import 'ol/ol.css';
 
 const ATTRIBUTION =
-  '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>';
+  '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> · Search by <a href="https://photon.komoot.io" target="_blank">Photon</a>';
 
 const draftStyle = new Style({
   image: new CircleStyle({ radius: 10, fill: new Fill({ color: '#E7246C' }), stroke: new Stroke({ color: '#FEF2D9', width: 3 }) }),
 });
 
-export default function MapView({ businesses, selectedId, onSelect, draft, onPick }) {
+export default function MapView({ businesses, selectedId, onSelect, draft, onPick, onCenter }) {
   const mapEl = useRef(null);
   const mapRef = useRef(null);
   const draftSource = useRef(null);
   const pins = useRef(new Map()); // id -> Overlay
   const handlers = useRef({});
-  handlers.current = { onSelect, onPick };
+  handlers.current = { onSelect, onPick, onCenter };
 
   // Create the map once.
   useEffect(() => {
@@ -50,6 +50,10 @@ export default function MapView({ businesses, selectedId, onSelect, draft, onPic
         pick({ lng, lat });
       }
     });
+    map.on('moveend', () => {
+      const [lng, lat] = toLonLat(map.getView().getCenter());
+      handlers.current.onCenter?.({ lng, lat });
+    });
     draftSource.current = source;
     mapRef.current = map;
     return () => map.setTarget(undefined);
@@ -66,8 +70,10 @@ export default function MapView({ businesses, selectedId, onSelect, draft, onPic
       el.className = 'pin';
       el.setAttribute('aria-label', b.name);
       el.title = b.name;
+      const sticker = stickerFor(b);
+      el.style.setProperty('--ring', ringFor(sticker));
       const img = document.createElement('img');
-      img.src = stickerUrl(stickerFor(b));
+      img.src = stickerUrl(sticker);
       img.alt = '';
       el.append(img);
       el.addEventListener('click', () => handlers.current.onSelect(b.id));
@@ -90,7 +96,11 @@ export default function MapView({ businesses, selectedId, onSelect, draft, onPic
   useEffect(() => {
     const source = draftSource.current;
     source.clear();
-    if (draft) source.addFeature(new Feature({ geometry: new Point(fromLonLat([draft.lng, draft.lat])) }));
+    if (!draft) return;
+    const at = fromLonLat([draft.lng, draft.lat]);
+    source.addFeature(new Feature({ geometry: new Point(at) }));
+    // Drafts from an address search carry a zoom; map clicks don't, so the view stays put.
+    if (draft.zoom) mapRef.current.getView().animate({ center: at, zoom: draft.zoom, duration: 500 });
   }, [draft]);
 
   return <div ref={mapEl} className={`map${onPick ? ' picking' : ''}`} />;

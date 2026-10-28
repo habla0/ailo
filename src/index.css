@@ -30,12 +30,11 @@ button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0
 .map.picking { cursor: crosshair; }
 
 /* Sticker pins */
-.pin { position: relative; display: block; width: 52px; height: 60px; padding: 0; border: 0; border-radius: 0; background: none; cursor: pointer; transform-origin: 50% 100%; transition: transform 0.15s ease; }
+.pin { position: relative; display: block; width: 52px; height: 60px; padding: 0; border: 0; border-radius: 0; background: none; cursor: pointer; transform-origin: 50% 100%; transition: transform 0.15s ease; filter: drop-shadow(0 3px 4px rgba(79, 71, 74, 0.35)); }
 .pin:hover { background: none; transform: scale(1.12); }
-.pin::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 12px; height: 12px; margin-left: -6px; background: var(--navy); clip-path: polygon(0 0, 100% 0, 50% 100%); }
-.pin img { display: block; width: 52px; height: 52px; border-radius: 50%; filter: drop-shadow(0 3px 4px rgba(79, 71, 74, 0.35)); }
+.pin::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 12px; height: 12px; margin-left: -6px; background: var(--ring, var(--navy)); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.pin img { display: block; width: 52px; height: 52px; border-radius: 50%; }
 .pin.selected { transform: scale(1.45); z-index: 2; }
-.pin.selected::after { background: var(--magenta); }
 
 /* Right-hand panel */
 .panel { width: 440px; flex: none; overflow-y: auto; padding: 24px 28px 40px; background: var(--cream); border-left: 2px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
@@ -54,6 +53,7 @@ button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0
 .form { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 14px; background: #fff; border: 2px solid var(--line); }
 .form input:not([type=radio]):not([type=file]), .form textarea { width: 100%; padding: 9px 11px; border: 2px solid var(--line); border-radius: 10px; background: #fff; }
 .form label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; color: var(--navy); font-size: 0.9rem; }
+.form textarea { font-weight: 400; color: var(--ink); }
 .sticker-pick { display: grid; grid-template-columns: repeat(4, 64px); gap: 6px; margin: 0; padding: 0; border: 0; }
 .sticker-pick legend { font-weight: 700; color: var(--navy); font-size: 0.9rem; margin-bottom: 6px; }
 .sticker-pick label { cursor: pointer; }
@@ -67,6 +67,30 @@ button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0
 .photo-pick img, .photo-empty { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; }
 .photo-empty { display: grid; place-items: center; background: var(--sage); color: var(--navy); font-weight: 700; }
 .form label.button { display: inline-block; font-size: 1rem; }
+.address-search { position: relative; display: flex; flex-direction: column; gap: 4px; }
+.address-search ul { position: absolute; top: 100%; left: 0; right: 0; z-index: 5; margin: 4px 0 0; padding: 4px; list-style: none; background: #fff; border: 2px solid var(--line); border-radius: 10px; box-shadow: 0 8px 20px rgba(79, 71, 74, 0.15); max-height: 300px; overflow-y: auto; }
+.address-search li { padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; line-height: 1.35; }
+.address-search li strong { display: block; color: var(--navy); }
+.address-search li.active, .address-search li:hover { background: var(--cream); }
+.address-status { color: var(--taupe); font-size: 0.85rem; }
+.address-suggest { margin: 0; padding: 8px 10px; border-radius: 10px; background: var(--cream); font-size: 0.85rem; line-height: 1.4; }
+.address-suggest button.link { padding: 0; }
+.hours-pick { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; border: 0; }
+.hours-pick legend { font-weight: 700; color: var(--navy); font-size: 0.9rem; margin-bottom: 4px; }
+.hours-pick legend small { font-weight: 400; color: var(--taupe); }
+.hours-row { display: flex; align-items: center; gap: 10px; min-height: 40px; }
+.form .hours-day { flex-direction: row; align-items: center; gap: 6px; width: 64px; flex: none; cursor: pointer; }
+.hours-day input { width: 18px; height: 18px; accent-color: var(--magenta); }
+.hours-times { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--taupe); }
+.form .hours-times input { width: auto; padding: 6px 8px; }
+.hours-closed { color: var(--taupe); font-size: 0.85rem; }
+.hours-row.closed .hours-day { color: var(--taupe); font-weight: 500; }
+.hours-pick button.link { align-self: flex-start; font-size: 0.85rem; }
+.week { display: grid; gap: 2px; margin: 6px 0 0; min-width: 220px; }
+.week div { display: flex; justify-content: space-between; gap: 16px; }
+.week dt, .week dd { margin: 0; }
+.week dt { font-weight: 700; color: var(--navy); }
+.week .today dt, .week .today dd { color: var(--magenta); font-weight: 700; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; }
 .place-hint { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--yellow); color: var(--navy); font-weight: 700; }
 .place-hint.done { background: var(--sage); }
@@ -84,6 +108,7 @@ button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0
 .owners { padding-top: 22px; border-top: 2px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
 .owners h2 { margin: 0; font-size: 2.1rem; line-height: 1.1; font-weight: 500; letter-spacing: -0.02em; color: var(--taupe); }
 .owners .intro { margin: 0; font-size: 0.92rem; line-height: 1.5; }
+.business-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
 .owners-photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; }
 .owners .caption { margin: 0; font-size: 1.2rem; line-height: 1.35; font-weight: 500; color: var(--taupe); }
 
