@@ -5,7 +5,7 @@ import { useBusinesses } from '../useBusinesses';
 import { photoToDataUrl } from '../photo';
 import { STICKERS, stickerFor, stickerUrl } from '../stickers';
 
-const empty = { name: '', address: '', hours: '', category: '', sticker: STICKERS[0].id, ownersPhoto: '' };
+const empty = { name: '', address: '', hours: '', category: '', sticker: STICKERS[0].id, ownersIntro: '', ownersPhoto: '' };
 
 export default function MapPage({ user }) {
   const { items, add, error: loadError } = useBusinesses(user);
@@ -45,8 +45,9 @@ export default function MapPage({ user }) {
     e.preventDefault();
     if (!draft) return setError('Click the map to place the business.');
     try {
-      const { ownersPhoto, ...rest } = form;
-      await add({ ...rest, ...(ownersPhoto && { ownersPhoto }), lng: draft.lng, lat: draft.lat });
+      const { ownersPhoto, ownersIntro, ...rest } = form;
+      const intro = ownersIntro.trim();
+      await add({ ...rest, ...(intro && { ownersIntro: intro }), ...(ownersPhoto && { ownersPhoto }), lng: draft.lng, lat: draft.lat });
       setForm(empty);
       setDraft(null);
       setAdding(false);
@@ -87,6 +88,10 @@ export default function MapPage({ user }) {
                     </label>
                   ))}
                 </fieldset>
+                <label className="intro-field">
+                  <span className="legend">Meet the Owners intro <small>(optional)</small></span>
+                  <textarea rows={4} maxLength={2000} placeholder="Who runs it and how it started. Each new line becomes its own paragraph." {...field('ownersIntro')} />
+                </label>
                 <div className="photo-pick">
                   <span className="legend">Photo of the business <small>(optional)</small></span>
                   {photoBusy ? <div className="photo-empty">Preparing photo…</div>

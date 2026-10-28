@@ -62,8 +62,8 @@ button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0
 .sticker-pick input:checked + img { border-color: var(--magenta); }
 .sticker-pick input:focus-visible + img { outline: 3px solid var(--yellow); }
 .photo-pick { display: flex; flex-direction: column; gap: 8px; }
-.photo-pick .legend { font-weight: 700; color: var(--navy); font-size: 0.9rem; }
-.photo-pick small { font-weight: 400; color: var(--taupe); }
+.photo-pick .legend, .intro-field .legend { font-weight: 700; color: var(--navy); font-size: 0.9rem; }
+.photo-pick small, .intro-field small { font-weight: 400; color: var(--taupe); }
 .photo-pick img, .photo-empty { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; }
 .photo-empty { display: grid; place-items: center; background: var(--sage); color: var(--navy); font-weight: 700; }
 .form label.button { display: inline-block; font-size: 1rem; }

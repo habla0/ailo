@@ -8,6 +8,10 @@ service cloud.firestore {
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() < 100
+        // Optional Meet the Owners intro
+        && (!('ownersIntro' in request.resource.data)
+          || (request.resource.data.ownersIntro is string
+            && request.resource.data.ownersIntro.size() <= 2000))
         // Optional owners photo: a shrunk JPEG data URL (see src/photo.js).
         && (!('ownersPhoto' in request.resource.data)
           || (request.resource.data.ownersPhoto is string
