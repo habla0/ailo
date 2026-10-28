@@ -21,7 +21,8 @@ button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0
 .nav { display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 64px; background: var(--cream); border-bottom: 2px solid var(--line); flex: none; }
 .nav a { color: var(--navy); text-decoration: none; font-weight: 700; padding: 6px 0; border-bottom: 3px solid transparent; }
 .nav a.active { border-bottom-color: var(--magenta); }
-.nav .brand { font-family: var(--display); font-size: 1.7rem; font-weight: 400; color: var(--magenta); border: 0; margin-right: 6px; }
+/* Same font as the h2s (DM Sans), at its heaviest weight to keep the title's heft */
+.nav .brand { font-size: 1.7rem; font-weight: 900; letter-spacing: -0.03em; color: var(--magenta); border: 0; margin-right: 6px; }
 .spacer { flex: 1; }
 .badge { color: var(--magenta); font-size: 0.85rem; font-weight: 700; }
 
