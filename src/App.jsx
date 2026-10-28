@@ -21,7 +21,7 @@ export default function App() {
   return (
     <HashRouter>
       <nav className="nav">
-        <NavLink to="/" className="brand">Ailo</NavLink>
+        <NavLink to="/" className="brand">The Ailo Map</NavLink>
         <NavLink to="/" end>Map</NavLink>
         <NavLink to="/about">About</NavLink>
         <span className="spacer" />

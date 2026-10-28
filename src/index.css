@@ -1,42 +1,106 @@
-:root { --ink: #12343b; --teal: #0f766e; --gold: #f2a900; --line: #d7e0df; --wash: #f3f7f6; }
+/* Ailo palette (from the brand guide) */
+:root {
+  --magenta: #E7246C; --coral: #F95762; --peach: #FA9E8C; --yellow: #FCD46F;
+  --taupe: #4F474A; --cream: #FEF2D9; --sage: #CADCD7; --navy: #102F76; --mist: #C8D1D9;
+  --ink: var(--taupe); --line: #EADBBE; --wash: #FBF2E1;
+  --display: "Lilita One", "Avenir Next", system-ui, sans-serif;
+}
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
-body { font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif; color: var(--ink); }
+body { font-family: "DM Sans", "Avenir Next", system-ui, sans-serif; color: var(--ink); background: var(--cream); }
 #root { display: flex; flex-direction: column; }
-button, input { font: inherit; }
-button { padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--ink); cursor: pointer; }
-button:hover { background: var(--wash); }
-button.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
-button.primary:hover { background: #0b5e57; }
-button.link { border: 0; background: none; color: var(--teal); padding: 4px 0; text-decoration: underline; }
-:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-.nav { display: flex; align-items: center; gap: 20px; padding: 0 20px; height: 56px; background: var(--ink); flex: none; }
-.nav a { color: #cfe3e0; text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
-.nav a.active { color: #fff; border-bottom-color: var(--gold); }
-.nav .brand { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; color: #fff; border: 0; margin-right: 8px; }
+button, input, textarea { font: inherit; color: inherit; }
+button, .button { display: inline-block; padding: 8px 14px; border: 2px solid var(--navy); border-radius: 999px; background: transparent; color: var(--navy); font-weight: 700; cursor: pointer; }
+button:hover, .button:hover { background: rgba(16, 47, 118, 0.06); }
+button.primary { background: var(--magenta); border-color: var(--magenta); color: #fff; }
+button.primary:hover { background: #cc1a5c; }
+button:disabled { opacity: 0.6; cursor: default; }
+button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0; text-decoration: underline; font-weight: 500; }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+.nav { display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 64px; background: var(--cream); border-bottom: 2px solid var(--line); flex: none; }
+.nav a { color: var(--navy); text-decoration: none; font-weight: 700; padding: 6px 0; border-bottom: 3px solid transparent; }
+.nav a.active { border-bottom-color: var(--magenta); }
+.nav .brand { font-family: var(--display); font-size: 1.7rem; font-weight: 400; color: var(--magenta); border: 0; margin-right: 6px; }
 .spacer { flex: 1; }
-.badge { color: var(--gold); font-size: 0.85rem; }
+.badge { color: var(--magenta); font-size: 0.85rem; font-weight: 700; }
+
 .layout { display: flex; flex: 1; min-height: 0; }
-.sidebar { width: 360px; overflow-y: auto; padding: 16px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
-.sidebar input { width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; }
-.sidebar ul { list-style: none; margin: 0; padding: 0; }
-.sidebar li { padding: 12px 10px; border-bottom: 1px solid var(--line); cursor: pointer; }
-.sidebar li:hover, .sidebar li.active { background: var(--wash); }
-.sidebar li.active { box-shadow: inset 4px 0 0 var(--gold); }
-.sidebar li.empty { cursor: default; color: #5b7378; }
-.sidebar small { display: block; color: #5b7378; }
-.tag { margin-left: 8px; font-size: 0.8rem; color: var(--teal); }
-.form { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--wash); }
-.row { display: flex; gap: 8px; }
-.hint { margin: 0; color: #5b7378; font-size: 0.9rem; }
+.map { flex: 1; min-width: 0; background: var(--wash); }
+.map.picking { cursor: crosshair; }
+
+/* Sticker pins */
+.pin { position: relative; display: block; width: 52px; height: 60px; padding: 0; border: 0; border-radius: 0; background: none; cursor: pointer; transform-origin: 50% 100%; transition: transform 0.15s ease; }
+.pin:hover { background: none; transform: scale(1.12); }
+.pin::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 12px; height: 12px; margin-left: -6px; background: var(--navy); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.pin img { display: block; width: 52px; height: 52px; border-radius: 50%; filter: drop-shadow(0 3px 4px rgba(79, 71, 74, 0.35)); }
+.pin.selected { transform: scale(1.45); z-index: 2; }
+.pin.selected::after { background: var(--magenta); }
+
+/* Right-hand panel */
+.panel { width: 440px; flex: none; overflow-y: auto; padding: 24px 28px 40px; background: var(--cream); border-left: 2px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
+.search { width: 100%; padding: 10px 0; border: 0; border-bottom: 2px solid var(--line); background: transparent; font-size: 1.05rem; }
+.search:focus { outline: none; border-bottom-color: var(--magenta); }
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { border-bottom: 2px solid var(--line); }
+.list li button { display: flex; gap: 14px; align-items: flex-start; width: 100%; padding: 18px 0; border: 0; border-radius: 0; background: none; color: inherit; text-align: left; font-weight: 400; }
+.list li button:hover strong { color: var(--coral); }
+.list img { width: 54px; height: 54px; flex: none; border-radius: 50%; }
+.list strong { display: block; font-family: var(--display); font-weight: 400; font-size: 1.9rem; line-height: 1.05; color: var(--magenta); text-transform: uppercase; margin-bottom: 6px; }
+.list small { display: block; font-size: 0.95rem; color: var(--taupe); line-height: 1.5; }
+.list li.empty { padding: 18px 0; color: var(--taupe); }
+.tag { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--sage); color: var(--navy); font-size: 0.8rem; font-weight: 700; }
+
+.form { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 14px; background: #fff; border: 2px solid var(--line); }
+.form input:not([type=radio]):not([type=file]), .form textarea { width: 100%; padding: 9px 11px; border: 2px solid var(--line); border-radius: 10px; background: #fff; }
+.form label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; color: var(--navy); font-size: 0.9rem; }
+.sticker-pick { display: grid; grid-template-columns: repeat(4, 64px); gap: 6px; margin: 0; padding: 0; border: 0; }
+.sticker-pick legend { font-weight: 700; color: var(--navy); font-size: 0.9rem; margin-bottom: 6px; }
+.sticker-pick label { cursor: pointer; }
+.sticker-pick input { position: absolute; opacity: 0; }
+.sticker-pick img { width: 100%; border-radius: 50%; border: 3px solid transparent; }
+.sticker-pick input:checked + img { border-color: var(--magenta); }
+.sticker-pick input:focus-visible + img { outline: 3px solid var(--yellow); }
+.photo-pick { display: flex; flex-direction: column; gap: 8px; }
+.photo-pick .legend { font-weight: 700; color: var(--navy); font-size: 0.9rem; }
+.photo-pick small { font-weight: 400; color: var(--taupe); }
+.photo-pick img, .photo-empty { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; }
+.photo-empty { display: grid; place-items: center; background: var(--sage); color: var(--navy); font-weight: 700; }
+.form label.button { display: inline-block; font-size: 1rem; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.place-hint { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--yellow); color: var(--navy); font-weight: 700; }
+.place-hint.done { background: var(--sage); }
+.hint { margin: 0; color: var(--taupe); font-size: 0.9rem; }
 .error { margin: 0; color: #b42318; font-size: 0.9rem; }
-.map { flex: 1; min-width: 0; }
+
+/* Business detail + Meet the Owners */
+.detail { display: flex; flex-direction: column; gap: 22px; }
+.back { align-self: flex-start; padding: 6px 12px; font-size: 0.9rem; }
+.detail-head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.detail-sticker { width: 96px; height: 96px; margin-bottom: 6px; border-radius: 50%; }
+.detail-head h1 { margin: 4px 0 2px; font-family: var(--display); font-weight: 400; font-size: 2.6rem; line-height: 1; color: var(--magenta); text-transform: uppercase; }
+.detail-head p { margin: 0; line-height: 1.5; }
+.detail-head .hours { color: var(--navy); font-weight: 700; }
+.owners { padding-top: 22px; border-top: 2px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.owners h2 { margin: 0; font-size: 2.1rem; line-height: 1.1; font-weight: 500; letter-spacing: -0.02em; color: var(--taupe); }
+.owners .intro { margin: 0; font-size: 0.92rem; line-height: 1.5; }
+.owners-photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; }
+.owners .caption { margin: 0; font-size: 1.2rem; line-height: 1.35; font-weight: 500; color: var(--taupe); }
+
 .page { max-width: 68ch; margin: 0 auto; padding: 40px 20px; overflow-y: auto; line-height: 1.6; }
-.page h1 { font-size: 2.2rem; letter-spacing: -0.02em; margin: 0 0 8px; }
-.lead { font-size: 1.15rem; color: #3f5c61; }
+.page h1 { font-family: var(--display); font-weight: 400; font-size: 2.6rem; color: var(--magenta); margin: 0 0 8px; }
+.page h2 { color: var(--navy); }
+.lead { font-size: 1.15rem; }
 .about section { margin-top: 28px; }
-@media (max-width: 700px) {
-  .layout { flex-direction: column-reverse; }
-  .sidebar { width: 100%; height: 45%; border-right: 0; border-top: 1px solid var(--line); }
-  .map { flex: 1; }
+
+/* Map attribution in brand colours */
+.ol-attribution.ol-uncollapsible { background: rgba(254, 242, 217, 0.85); }
+.ol-zoom button, .ol-attribution button { border-radius: 4px; padding: 0; background: var(--cream); color: var(--navy); border: 0; }
+
+@media (max-width: 760px) {
+  .layout { flex-direction: column; }
+  .map { flex: 1 1 50%; }
+  .panel { width: 100%; flex: 1 1 50%; border-left: 0; border-top: 2px solid var(--line); padding: 16px; }
+  .list strong { font-size: 1.5rem; }
+  .detail-head h1 { font-size: 2rem; }
 }

@@ -7,8 +7,13 @@ service cloud.firestore {
         && request.resource.data.ownerId == request.auth.uid
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
-        && request.resource.data.name.size() < 100;
-      allow update, delete: if request.auth != null && resource.data.ownerId == request.auth.uid;
+        && request.resource.data.name.size() < 100
+        // Optional owners photo: a shrunk JPEG data URL (see src/photo.js).
+        && (!('ownersPhoto' in request.resource.data)
+          || (request.resource.data.ownersPhoto is string
+            && request.resource.data.ownersPhoto.size() <= 700000));
+      // Submissions are final: edits and deletions are made in the Firebase console only.
+      allow update, delete: if false;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db, enabled } from './firebase';
 import sample from './sample.json';
 
@@ -23,10 +23,5 @@ export function useBusinesses(user) {
     await addDoc(collection(db, 'businesses'), { ...data, createdAt: serverTimestamp() });
   }
 
-  async function remove(id) {
-    if (!enabled) return setItems((prev) => prev.filter((b) => b.id !== id));
-    await deleteDoc(doc(db, 'businesses', id));
-  }
-
-  return { items, add, remove, error };
+  return { items, add, error };
 }

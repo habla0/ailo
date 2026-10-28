@@ -1,5 +1,36 @@
 [
-  { "id": "s1", "name": "Harbour Bean Roasters", "address": "12 Circular Quay W, Sydney NSW 2000", "lng": 151.2108, "lat": -33.8615, "hours": "Mon-Fri 7am-4pm", "category": "Cafe" },
-  { "id": "s2", "name": "Paddington Books", "address": "88 Oxford St, Paddington NSW 2021", "lng": 151.2269, "lat": -33.8844, "hours": "Daily 10am-6pm", "category": "Bookshop" },
-  { "id": "s3", "name": "Newtown Noodle House", "address": "201 King St, Newtown NSW 2042", "lng": 151.1790, "lat": -33.8976, "hours": "Tue-Sun 11am-9pm", "category": "Restaurant" }
+  {
+    "id": "s1",
+    "sticker": "navy",
+    "name": "Harbour Bean Roasters",
+    "address": "12 Circular Quay W, Sydney NSW 2000",
+    "lng": 151.2108,
+    "lat": -33.8615,
+    "hours": "Mon-Fri 7am-4pm",
+    "category": "Cafe",
+    "ownersIntro": "Maya and Tom started roasting beans in their garage in 2014, selling bags to neighbours on weekends.\nThey designed every label by hand, and still do.",
+    "ownersCaption": "From a garage roaster to the busiest corner of the Quay, every cup is still roasted in small batches."
+  },
+  {
+    "id": "s2",
+    "sticker": "coral",
+    "name": "Paddington Books",
+    "address": "88 Oxford St, Paddington NSW 2021",
+    "lng": 151.2269,
+    "lat": -33.8844,
+    "hours": "Daily 10am-6pm",
+    "category": "Bookshop",
+    "ownersIntro": "Two sisters, one shopfront and a lot of second-hand shelves.",
+    "ownersCaption": "Hand-lettered signs, hand-picked books."
+  },
+  {
+    "id": "s3",
+    "sticker": "magenta",
+    "name": "Newtown Noodle House",
+    "address": "201 King St, Newtown NSW 2042",
+    "lng": 151.179,
+    "lat": -33.8976,
+    "hours": "Tue-Sun 11am-9pm",
+    "category": "Restaurant"
+  }
 ]
