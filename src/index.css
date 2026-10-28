@@ -34,7 +34,8 @@ button.link { border: 0; background: none; color: var(--magenta); padding: 4px 0
 .pin { position: relative; display: block; width: 52px; height: 60px; padding: 0; border: 0; border-radius: 0; background: none; cursor: pointer; transform-origin: 50% 100%; transition: transform 0.15s ease; filter: drop-shadow(0 3px 4px rgba(79, 71, 74, 0.35)); }
 .pin:hover { background: none; transform: scale(1.12); }
 .pin::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 12px; height: 12px; margin-left: -6px; background: var(--ring, var(--navy)); clip-path: polygon(0 0, 100% 0, 50% 100%); }
-.pin img { display: block; width: 52px; height: 52px; border-radius: 50%; }
+/* The sticker sits in front of the arrow so only the point shows below it */
+.pin img { position: relative; z-index: 1; display: block; width: 52px; height: 52px; border-radius: 50%; }
 .pin.selected { transform: scale(1.45); z-index: 2; }
 
 /* Right-hand panel */
